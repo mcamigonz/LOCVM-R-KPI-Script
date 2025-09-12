@@ -1,0 +1,13 @@
+# loads packages / assumes googleAnalyticsR was downloaded
+install.packages("googleAnalyticsR")
+install.packages("taskscheduleR")
+library(googleAnalyticsR)
+library(dplyr)
+library(taskscheduleR)
+
+# you need to setup this function in a different tab away from the script you want to be running every week. rscript is the location of the rscript you want to repeat
+taskscheduler_create(
+  taskname = "LOCVM_database_1",
+  rscript = "C:\Users\cynet\documents\R\LOCVMrunthrough.R",
+  schedule = "0 10 * * *"
+)
