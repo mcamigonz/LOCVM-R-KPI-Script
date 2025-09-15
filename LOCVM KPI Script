@@ -1,0 +1,74 @@
+# loads packages 
+install.packages("googleAnalyticsR")
+install.packages("taskscheduleR")
+install.packages("jsonlite")
+install.packages("mongolite")
+install.packages("gargle")
+library(googleAnalyticsR)
+library(dplyr)
+library(taskscheduleR)
+library(jsonlite)
+library(mongolite)
+library(gargle)
+
+# this was my attempt to try to have json key work through Service Account addition on Google Console (line15-19)
+json_key <- ("C:/Users/cynet/Documents/R/LOCVM_GA_Key")
+
+ga_auth(
+  service_json = "C:/Users/cynet/Documents/R/LOCVM_GA_Key.json"
+  )
+
+# usually you use this for API access, you will have to press 1 on the console and then confirm access with google acc on seperate window
+ga_auth()
+
+# for automation purposes we need smth that will approve access on it's own. This token allows for the '1' on the console not to be pressed, still figuring out a way (need to make a user on GA)
+ga_auth("C:/Users/cynet/Documents/R/ga4_tokens.rds")
+
+# is linked to your specific website / pages you want to be analyzed
+my_property_id <- 467127828
+
+# set your date range so that all your other functions reflect it when running code (internal standard)
+daterange <- c(Sys.Date()-1, Sys.Date()-1)
+
+# seeing session sources for 'traffic'
+traffic_sources2 <- ga_data(
+  my_property_id,
+  dimensions = c("source", "date"),
+  metrics = c("sessions"),
+  date_range = daterange
+)
+
+# ga4 version doesn't have 'exits' for a variable so we can use bounceRate and engagedSessions to infer ourselves
+page_drops <- ga_data(
+  my_property_id,
+  metrics = c("screenPageViews", "bounceRate", "engagedSessions"),
+  dimensions = c("pagePath"),
+  date_range = daterange
+)
+
+# gives us monthly dated traffic / organizer with dyplr
+traffic_over_time <- ga_data(
+  my_property_id,
+  date_range = c(Sys.Date() - 30, Sys.Date()),
+  dimensions = c("date"),
+  metrics = c("sessions")
+) %>%
+  arrange(date)
+
+# gives us connection to mongo db to allow us to automatically put our jsom kpi files onto the software
+mongo_url <- "mongodb+srv://interns:Gw9cHSuuZVxpyUWR@dev-cluster.pnnxf.mongodb.net/"  # your connection string
+db_collection <- "Data"  # collection name
+
+# Create a connection
+conn <- mongo(collection = db_collection, db = "test", url = mongo_url)
+
+# inserts the kpi's into mongodb 
+# we are doing a different jsom file for each kpi
+conn$insert(traffic_sources2)
+conn$insert(page_drops)
+conn$insert(traffic_over_time)
+
+# if not to mongodb you can direct the files a file on your computer
+all_metrics <- c(traffic_sources2, page_drops, traffic_over_time)
+json_data <- toJSON(all_metrics, pretty = TRUE, auto_unbox = TRUE)
+write(json_data, "C:/Users/Maria/Documents/R/metrics.json")
