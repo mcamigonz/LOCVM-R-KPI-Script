@@ -12,10 +12,10 @@ library(mongolite)
 library(gargle)
 
 # this was my attempt to try to have json key work through Service Account addition on Google Console (line15-19)
-json_key <- ("C:/Users/cynet/Documents/R/LOCVM_GA_Key")
+json_key <- ("C:/Users/your)user/Documents/R/LOCVM_GA_Key")
 
 ga_auth(
-  service_json = "C:/Users/cynet/Documents/R/LOCVM_GA_Key.json"
+  service_json = "C:/Users/your_user/Documents/R/LOCVM_GA_Key.json"
   )
 
 # usually you use this for API access, you will have to press 1 on the console and then confirm access with google acc on seperate window
@@ -25,7 +25,7 @@ ga_auth()
 ga_auth("C:/Users/cynet/Documents/R/ga4_tokens.rds")
 
 # is linked to your specific website / pages you want to be analyzed
-my_property_id <- 467127828
+my_property_id <- your_property_ID #should be found on 
 
 # set your date range so that all your other functions reflect it when running code (internal standard)
 daterange <- c(Sys.Date()-1, Sys.Date()-1)
@@ -56,7 +56,7 @@ traffic_over_time <- ga_data(
   arrange(date)
 
 # gives us connection to mongo db to allow us to automatically put our jsom kpi files onto the software
-mongo_url <- "mongodb+srv://interns:Gw9cHSuuZVxpyUWR@dev-cluster.pnnxf.mongodb.net/"  # your connection string
+mongo_url <- "mongodb+srv://your_connection_string"  # your connection string
 db_collection <- "Data"  # collection name
 
 # Create a connection
