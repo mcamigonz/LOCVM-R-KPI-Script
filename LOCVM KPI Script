@@ -71,4 +71,4 @@ conn$insert(traffic_over_time)
 # if not to mongodb you can direct the files a file on your computer
 all_metrics <- c(traffic_sources2, page_drops, traffic_over_time)
 json_data <- toJSON(all_metrics, pretty = TRUE, auto_unbox = TRUE)
-write(json_data, "C:/Users/Maria/Documents/R/metrics.json")
+write(json_data, "C:/Users/your_user/Documents/R/metrics.json")
